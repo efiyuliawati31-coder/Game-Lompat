@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Motion Lompat - Kegiatan Ekonomi Kelas 5 SD</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        fredoka: ['"Fredoka One"', 'cursive'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            yellow: '#FFC72C',
+                            orange: '#FF7A00',
+                            purple: '#6C5CE7',
+                            green: '#00B894',
+                            red: '#FF7675',
+                            blue: '#0984E3',
+                            dark: '#2D3436'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #a8c0ff 0%, #3f2b96 100%);
+            min-height: 100vh;
+        }
+
+        .cam-overlay-grid {
+            background-size: 20px 20px;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.2) 1px, transparent 1px);
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.03); }
+        }
+
+        .glow-active {
+            animation: pulse-glow 1.2s infinite ease-in-out;
+        }
+
+        /* Mirror video for natural movement */
+        .mirror {
+            transform: scaleX(-1);
+        }
+
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.1s linear;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-yellow-300 selection:text-purple-900 pb-10">
+
+    <div id="app" class="max-w-6xl mx-auto px-4 py-6">
+
+        <!-- Top Header Navigation -->
+        <header class="flex flex-wrap items-center justify-between gap-4 bg-white/90 backdrop-blur-md p-4 rounded-3xl shadow-xl mb-6 border-4 border-yellow-300">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 bg-gradient-to-tr from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg transform -rotate-3">
+                    <i class="fa-solid fa-person-running"></i>
+                </div>
+                <div>
+                    <h1 class="font-fredoka text-2xl md:text-3xl text-purple-900 tracking-wide">GERAK & LOMPAT!</h1>
+                    <p class="text-xs font-bold text-purple-600 uppercase tracking-wider">Kuis Kegiatan Ekonomi - Kelas 5 SD</p>
+                </div>
+            </div>
+
+            <!-- Controls & Score Header -->
+            <div class="flex items-center gap-3">
+                <div class="bg-amber-100 text-amber-900 px-4 py-2 rounded-2xl font-bold flex items-center gap-2 border border-amber-300 shadow-inner">
+                    <i class="fa-solid fa-trophy text-amber-500 text-lg"></i>
+                    <span>Skor: <span id="headerScore" class="text-xl font-fredoka text-orange-600">0</span></span>
+                </div>
+                <button id="btnSoundToggle" class="w-10 h-10 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl flex items-center justify-center shadow transition" title="Toggle Suara">
+                    <i class="fa-solid fa-volume-high" id="soundIcon"></i>
+                </button>
+                <button id="btnAiModal" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-3 py-2 rounded-2xl shadow transition text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span class="hidden md:inline">Buat Soal AI</span>
+                </button>
+            </div>
+        </header>
+
+        <main>
+            <!-- 1. START / WELCOME SCREEN -->
+            <section id="startScreen" class="bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-10 shadow-2xl border-4 border-purple-300 text-center max-w-3xl mx-auto my-4">
+                <div class="inline-block bg-yellow-100 text-yellow-800 text-xs font-bold px-4 py-1.5 rounded-full mb-4 uppercase border border-yellow-300">
+                    <i class="fa-solid fa-gamepad mr-1"></i> Mode Game Interaktif Kamera
+                </div>
+                <h2 class="font-fredoka text-3xl md:text-5xl text-purple-950 mb-4 leading-tight">
+                    Belajar Ekonomi Sambil <span class="text-orange-500 underline decoration-yellow-400 decoration-wavy">Melompat!</span>
+                </h2>
+                <p class="text-slate-600 text-base md:text-lg mb-8 leading-relaxed max-w-2xl mx-auto">
+                    Berdiri di depan kamera! Gerakkan tubuhmu ke **Kiri (Jawaban A)** atau ke **Kanan (Jawaban B)**, lalu **Lompat** atau tahan posisi untuk memilih jawaban yang benar!
+                </p>
+
+                <!-- Instructions Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 text-left">
+                    <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-4 flex flex-col items-center text-center">
+                        <div class="w-12 h-12 bg-emerald-500 text-white rounded-full flex items-center justify-center text-xl font-bold mb-2 shadow">1</div>
+                        <h3 class="font-bold text-emerald-900 mb-1">Pindah Ke Kiri</h3>
+                        <p class="text-xs text-emerald-700">Bergerak ke sisi **kiri layar** untuk memilih pilihan **A**.</p>
+                    </div>
+                    <div class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 flex flex-col items-center text-center">
+                        <div class="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center text-xl font-bold mb-2 shadow">2</div>
+                        <h3 class="font-bold text-blue-900 mb-1">Pindah Ke Kanan</h3>
+                        <p class="text-xs text-blue-700">Bergerak ke sisi **kanan layar** untuk memilih pilihan **B**.</p>
+                    </div>
+                    <div class="bg-purple-50 border-2 border-purple-200 rounded-2xl p-4 flex flex-col items-center text-center">
+                        <div class="w-12 h-12 bg-purple-500 text-white rounded-full flex items-center justify-center text-xl font-bold mb-2 shadow">3</div>
+                        <h3 class="font-bold text-purple-900 mb-1">Lompat!</h3>
+                        <p class="text-xs text-purple-700">Lompat atau berdiri diam di zona pilihan selama 2 detik untuk mengunci jawaban.</p>
+                    </div>
+                </div>
+
+                <!-- Input Controls Mode Selection -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
+                    <button id="btnStartCam" class="w-full sm:w-auto bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-fredoka text-xl px-8 py-4 rounded-2xl shadow-xl hover:shadow-2xl transition transform hover:-translate-y-1 flex items-center justify-center gap-3 border-b-4 border-orange-700">
+                        <i class="fa-solid fa-camera text-2xl"></i>
+                        <span>Mulai Dengan Kamera</span>
+                    </button>
+                    <button id="btnStartKeyboard" class="w-full sm:w-auto bg-slate-700 hover:bg-slate-800 text-white font-bold px-6 py-4 rounded-2xl shadow-lg transition text-base flex items-center justify-center gap-2 border-b-4 border-slate-900">
+                        <i class="fa-solid fa-keyboard"></i>
+                        <span>Pakai Keypad / Sentuh</span>
+                    </button>
+                </div>
+
+                <div class="text-xs text-slate-500 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-emerald-500"></i>
+                    Kamera hanya diolah secara lokal di peramban Anda. Tidak ada video yang disimpan atau dikirim.
+                </div>
+            </section>
+
+            <!-- 2. GAME SCREEN (CAMERA + QUESTIONS) -->
+            <section id="gameScreen" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                <!-- Left Column: Camera Feed & Tracking Visualizer -->
+                <div class="lg:col-span-7 flex flex-col gap-4">
+                    <div class="relative bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/80 aspect-video flex items-center justify-center">
+
+                        <!-- Hidden Raw Video & Canvas processing -->
+                        <video id="videoElement" class="hidden" playsinline></video>
+                        <canvas id="processCanvas" class="hidden"></canvas>
+
+                        <!-- Display Mirror Canvas -->
+                        <canvas id="outputCanvas" class="w-full h-full object-cover mirror"></canvas>
+
+                        <!-- Overlay Motion Detection Boxes -->
+                        <div id="cameraOverlay" class="absolute inset-0 pointer-events-none flex flex-col justify-between p-4">
+
+                            <!-- Top Bar Status inside Video -->
+                            <div class="flex items-center justify-between gap-2">
+                                <span id="camStatusBadge" class="bg-slate-900/80 backdrop-blur text-white text-xs px-3 py-1.5 rounded-full font-bold border border-white/20 flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                                    Sensor Aktif
+                                </span>
+                                <span id="motionDetectorLabel" class="bg-purple-900/80 backdrop-blur text-yellow-300 text-xs px-3 py-1.5 rounded-full font-bold border border-purple-400/30">
+                                    Posisi: Tengah (Siap)
+                                </span>
+                            </div>
+
+                            <!-- Zone Visualizers A & B -->
+                            <div class="grid grid-cols-2 gap-4 h-3/4 my-auto">
+                                <!-- Zone A (Left Screen side, physically user's left if mirrored) -->
+                                <div id="zoneAVisual" class="border-4 border-dashed border-emerald-400/60 bg-emerald-500/10 rounded-2xl flex flex-col justify-between p-3 transition-all duration-200">
+                                    <div class="flex items-center justify-between">
+                                        <span class="bg-emerald-500 text-white font-fredoka px-3 py-1 rounded-xl text-lg shadow">ZONA A</span>
+                                        <i class="fa-solid fa-arrow-left text-emerald-300 text-xl"></i>
+                                    </div>
+                                    <div class="text-center my-auto">
+                                        <div class="text-3xl font-fredoka text-emerald-300 drop-shadow-md">A</div>
+                                        <p class="text-[11px] font-bold text-white bg-black/50 px-2 py-0.5 rounded-full inline-block mt-1">Sisi Kiri</p>
+                                    </div>
+                                    <!-- Selection Progress Bar -->
+                                    <div class="w-full bg-slate-800/80 rounded-full h-3 overflow-hidden border border-emerald-400/30">
+                                        <div id="progressZoneA" class="bg-emerald-400 h-full w-0 transition-all duration-75"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Zone B (Right Screen side) -->
+                                <div id="zoneBVisual" class="border-4 border-dashed border-blue-400/60 bg-blue-500/10 rounded-2xl flex flex-col justify-between p-3 transition-all duration-200">
+                                    <div class="flex items-center justify-between">
+                                        <span class="bg-blue-500 text-white font-fredoka px-3 py-1 rounded-xl text-lg shadow">ZONA B</span>
+                                        <i class="fa-solid fa-arrow-right text-blue-300 text-xl"></i>
+                                    </div>
+                                    <div class="text-center my-auto">
+                                        <div class="text-3xl font-fredoka text-blue-300 drop-shadow-md">B</div>
+                                        <p class="text-[11px] font-bold text-white bg-black/50 px-2 py-0.5 rounded-full inline-block mt-1">Sisi Kanan</p>
+                                    </div>
+                                    <!-- Selection Progress Bar -->
+                                    <div class="w-full bg-slate-800/80 rounded-full h-3 overflow-hidden border border-blue-400/30">
+                                        <div id="progressZoneB" class="bg-blue-400 h-full w-0 transition-all duration-75"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bottom Sensor Jump Alert Banner -->
+                            <div class="text-center">
+                                <span id="jumpAlert" class="hidden bg-gradient-to-r from-yellow-400 to-orange-500 text-slate-950 font-fredoka px-6 py-2 rounded-2xl shadow-xl text-lg animate-bounce inline-block">
+                                    🚀 TERDETEKSI MELOMPAT!
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Sensitivity & Recalibrate Controls -->
+                    <div class="bg-white/90 backdrop-blur rounded-2xl p-4 shadow-lg border border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs font-bold text-slate-700">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-purple-600"></i>
+                            <span>Sensitivitas Gerak (Lebih Peka):</span>
+                            <input id="sensitivitySlider" type="range" min="5" max="35" value="12" class="w-24 accent-purple-600">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button id="btnRecalibrate" class="bg-slate-100 hover:bg-slate-200 text-slate-800 px-3 py-1.5 rounded-xl border border-slate-300 flex items-center gap-1.5 transition">
+                                <i class="fa-solid fa-arrows-rotate text-purple-600"></i>
+                                Reset Kalibrasi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Question & Options Panel -->
+                <div class="lg:col-span-5 flex flex-col justify-between gap-4">
+
+                    <div class="bg-white/95 backdrop-blur rounded-3xl p-6 shadow-2xl border-4 border-purple-200 flex-1 flex flex-col justify-between">
+
+                        <!-- Question Top Metadata -->
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span id="questionCounter" class="bg-purple-100 text-purple-800 font-bold text-xs px-3 py-1.5 rounded-xl uppercase tracking-wider">
+                                    Soal 1 dari 10
+                                </span>
+                                <!-- Timer Circle / Countdown -->
+                                <div class="flex items-center gap-2 text-rose-600 font-fredoka text-xl">
+                                    <i class="fa-regular fa-clock animate-spin"></i>
+                                    <span id="timerText">15</span>s
+                                </div>
+                            </div>
+
+                            <!-- Question Text -->
+                            <h2 id="questionText" class="font-fredoka text-xl md:text-2xl text-purple-950 mb-4 leading-snug">
+                                Memuat Pertanyaan...
+                            </h2>
+
+                            <!-- Dynamic Feedback Banner for Correct / Wrong Answer -->
+                            <div id="answerFeedbackBanner" class="hidden transition-all duration-300 my-3 p-3 rounded-2xl text-center font-bold text-sm shadow-md border-2"></div>
+                        </div>
+
+                        <!-- Options Cards A & B -->
+                        <div class="space-y-4 my-2">
+                            <!-- Option A -->
+                            <button id="btnOptionA" onclick="selectAnswer('A')" class="w-full text-left bg-emerald-50 hover:bg-emerald-100 border-4 border-emerald-300 rounded-2xl p-4 transition-all duration-200 flex items-start gap-4 group shadow-md relative overflow-hidden">
+                                <div id="badgeA" class="w-10 h-10 rounded-xl bg-emerald-500 text-white font-fredoka text-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition shadow">
+                                    A
+                                </div>
+                                <div class="my-auto flex-1">
+                                    <div class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-0.5">Opsi A (Sisi Kiri)</div>
+                                    <div id="optionAText" class="font-bold text-slate-800 text-base md:text-lg">Pilihan A</div>
+                                </div>
+                                <i class="fa-solid fa-circle-check text-emerald-600 text-3xl hidden" id="checkA"></i>
+                                <i class="fa-solid fa-circle-xmark text-rose-600 text-3xl hidden" id="crossA"></i>
+                            </button>
+
+                            <!-- Option B -->
+                            <button id="btnOptionB" onclick="selectAnswer('B')" class="w-full text-left bg-blue-50 hover:bg-blue-100 border-4 border-blue-300 rounded-2xl p-4 transition-all duration-200 flex items-start gap-4 group shadow-md relative overflow-hidden">
+                                <div id="badgeB" class="w-10 h-10 rounded-xl bg-blue-500 text-white font-fredoka text-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition shadow">
+                                    B
+                                </div>
+                                <div class="my-auto flex-1">
+                                    <div class="text-xs font-bold text-blue-700 uppercase tracking-wider mb-0.5">Opsi B (Sisi Kanan)</div>
+                                    <div id="optionBText" class="font-bold text-slate-800 text-base md:text-lg">Pilihan B</div>
+                                </div>
+                                <i class="fa-solid fa-circle-check text-blue-600 text-3xl hidden" id="checkB"></i>
+                                <i class="fa-solid fa-circle-xmark text-rose-600 text-3xl hidden" id="crossB"></i>
+                            </button>
+                        </div>
+
+                        <!-- Manual On-Screen Controls / Touch & Keyboard Hint -->
+                        <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-semibold">
+                            <span class="flex items-center gap-1.5">
+                                <i class="fa-solid fa-keyboard text-purple-600"></i>
+                                Pintasan: Key <kbd class="px-1.5 py-0.5 bg-slate-200 rounded text-slate-800">←</kbd> (A), <kbd class="px-1.5 py-0.5 bg-slate-200 rounded text-slate-800">→</kbd> (B)
+                            </span>
+                            <span class="text-purple-700 font-bold cursor-pointer hover:underline" onclick="readQuestionTTS()">
+                                <i class="fa-solid fa-volume-high mr-1"></i> Baca Soal
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- 3. RESULT / SCORE SCREEN -->
+            <section id="resultScreen" class="hidden bg-white/95 backdrop-blur-md rounded-3xl p-6 md:p-10 shadow-2xl border-4 border-yellow-300 max-w-3xl mx-auto my-4 text-center">
+                <div class="w-24 h-24 bg-gradient-to-tr from-yellow-400 to-amber-500 rounded-3xl flex items-center justify-center text-white text-5xl mx-auto mb-4 shadow-xl transform rotate-6">
+                    <i class="fa-solid fa-trophy" id="resultIcon"></i>
+                </div>
+                <h2 id="resultTitle" class="font-fredoka text-3xl md:text-5xl text-purple-950 mb-2">
+                    Luar Biasa!
+                </h2>
+                <p id="resultSubtitle" class="text-slate-600 font-bold text-lg mb-6">
+                    Kamu telah menyelesaikan kuis Kegiatan Ekonomi!
+                </p>
+
+                <!-- Score Stats Box -->
+                <div class="grid grid-cols-3 gap-4 max-w-md mx-auto mb-8">
+                    <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4">
+                        <div class="text-xs text-amber-700 font-bold uppercase">Total Skor</div>
+                        <div id="finalScore" class="font-fredoka text-3xl text-amber-600">0</div>
+                    </div>
+                    <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-4">
+                        <div class="text-xs text-emerald-700 font-bold uppercase">Benar</div>
+                        <div id="finalCorrect" class="font-fredoka text-3xl text-emerald-600">0</div>
+                    </div>
+                    <div class="bg-rose-50 border-2 border-rose-200 rounded-2xl p-4">
+                        <div class="text-xs text-rose-700 font-bold uppercase">Salah</div>
+                        <div id="finalWrong" class="font-fredoka text-3xl text-rose-600">0</div>
+                    </div>
+                </div>
+
+                <!-- Mistakes Review Accordion / List -->
+                <div id="reviewContainer" class="text-left bg-slate-50 border border-slate-200 rounded-2xl p-4 mb-8 max-h-60 overflow-y-auto">
+                    <h3 class="font-bold text-slate-800 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-book-open text-purple-600"></i> Evaluasi & Ringkasan Soal:
+                    </h3>
+                    <div id="reviewList" class="space-y-3 text-xs md:text-sm"></div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <button onclick="restartQuiz()" class="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-fredoka text-xl px-8 py-4 rounded-2xl shadow-lg transition transform hover:-translate-y-1">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Main Lagi
+                    </button>
+                    <button id="btnAiGenerateMore" class="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-white font-bold px-6 py-4 rounded-2xl shadow transition text-base">
+                        <i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Buat Soal AI Baru
+                    </button>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Modal AI Question Generator (Gemini Integration) -->
+        <div id="aiModal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div class="bg-white rounded-3xl p-6 md:p-8 max-w-lg w-full shadow-2xl border-4 border-purple-300 transform transition-all">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-purple-100 text-purple-700 rounded-2xl flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <h3 class="font-fredoka text-2xl text-purple-950">Generator Soal AI</h3>
+                    </div>
+                    <button id="btnCloseAiModal" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
+                </div>
+
+                <p class="text-slate-600 text-sm mb-4">
+                    Gunakan integrasi Gemini 3 Flash untuk menghasilkan soal pilihan A/B otomatis terkait Kegiatan Ekonomi Kelas 5 SD!
+                </p>
+
+                <div class="space-y-4 mb-6">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Topik Spesifik (Opsional)</label>
+                        <input id="aiTopicInput" type="text" placeholder="Contoh: Produsen, Jasa vs Barang, Koperasi, Import Eksport..." class="w-full border-2 border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-purple-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Jumlah Soal</label>
+                        <select id="aiCountSelect" class="w-full border-2 border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-purple-500 focus:outline-none">
+                            <option value="5">5 Soal Baru</option>
+                            <option value="10" selected>10 Soal Baru</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-3">
+                    <button id="btnCancelAi" class="px-4 py-2.5 text-slate-600 hover:bg-slate-100 rounded-xl font-bold text-sm">Batal</button>
+                    <button id="btnGenerateAiQuestions" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 py-2.5 rounded-xl shadow transition text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-bolt"></i>
+                        <span>Generasi Soal</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const DEFAULT_QUESTIONS = [
+            {
+                question: "Kegiatan yang bertujuan untuk menghasilkan barang atau jasa baru dinamakan...",
+                optionA: "Produksi",
+                optionB: "Konsumsi",
+                correct: "A",
+                explanation: "Produksi adalah kegiatan menciptakan atau menambah nilai guna suatu barang/jasa."
+            },
+            {
+                question: "Orang atau lembaga yang menyalurkan barang dari pembuat ke pembeli disebut...",
+                optionA: "Konsumen",
+                optionB: "Distributor",
+                correct: "B",
+                explanation: "Distributor adalah pihak yang melakukan kegiatan distribusi (penyaluran barang/jasa)."
+            },
+            {
+                question: "Memakai, menggunakan, atau menghabiskan nilai guna barang dan jasa adalah kegiatan...",
+                optionA: "Konsumsi",
+                optionB: "Produksi",
+                correct: "A",
+                explanation: "Konsumsi dilakukan oleh konsumen untuk memenuhi kebutuhan hidup sehari-hari."
+            },
+            {
+                question: "Dokter, guru, sopir angkot, dan pangkas rambut merupakan contoh usaha di bidang...",
+                optionA: "Jasa",
+                optionB: "Agraris",
+                correct: "A",
+                explanation: "Usaha jasa memberikan pelayanan kemampuan/keterampilan tanpa menghasilkan barang fisik."
+            },
+            {
+                question: "Petani padi, peternak ayam, dan nelayan menangkap ikan tergolong dalam kegiatan...",
+                optionA: "Distribusi",
+                optionB: "Produksi",
+                correct: "B",
+                explanation: "Mereka menghasilkan barang bahan pangan utama bagi masyarakat."
+            },
+            {
+                question: "Usaha mengolah bahan mentah menjadi barang jadi atau setengah jadi dinamakan bidang...",
+                optionA: "Industri / Manufaktur",
+                optionB: "Ekstraktif",
+                correct: "A",
+                explanation: "Industri mengubah bahan baku (seperti kapas) menjadi barang jadi (pakaian)."
+            },
+            {
+                question: "Siswa yang membeli buku dan pulpen di koperasi sekolah berperan sebagai...",
+                optionA: "Distributor",
+                optionB: "Konsumen",
+                correct: "B",
+                explanation: "Siswa yang membeli dan menggunakan alat tulis bertindak sebagai konsumen."
+            },
+            {
+                question: "Kegiatan mengambil sumber daya alam secara langsung dari alam tanpa diolah (seperti penambangan) adalah usaha...",
+                optionA: "Ekstraktif",
+                optionB: "Perdagangan",
+                correct: "A",
+                explanation: "Usaha ekstraktif mengambil langsung kekayaan alam seperti minyak bumi, batu bara, atau emas."
+            },
+            {
+                question: "Badan usaha yang berlandaskan asas kekeluargaan dan bertujuan memajukan kesejahteraan anggotanya adalah...",
+                optionA: "Koperasi",
+                optionB: "PT (Perseroan Terbatas)",
+                correct: "A",
+                explanation: "Koperasi adalah badan usaha khas Indonesia sesuai UUD 1945 pasal 33."
+            },
+            {
+                question: "Menjual barang dari Indonesia ke luar negeri dinamakan kegiatan...",
+                optionA: "Impor",
+                optionB: "Ekspor",
+                correct: "B",
+                explanation: "Ekspor adalah menjual barang/jasa ke luar negeri, sedangkan Impor adalah membeli dari luar negeri."
+            }
+        ];
+
+        let currentQuestions = [...DEFAULT_QUESTIONS];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let correctCount = 0;
+        let wrongCount = 0;
+        let timer = 15;
+        let timerInterval = null;
+        let userAnswers = [];
+        let isCameraActive = false;
+        let isSoundMuted = false;
+        let isAnsweringState = false; // State flag to prevent duplicate triggers during answer reveal
+
+        // Motion Detection State
+        let videoStream = null;
+        let prevFrameData = null;
+        let motionX = 0; // -1 (Left/A), 0 (Center), +1 (Right/B)
+        let zoneAHoldTime = 0;
+        let zoneBHoldTime = 0;
+        const HOLD_REQUIRED = 10; // Reduced from 20 to 10 frames (~0.35s) for high sensitivity!
+        let lastHeadY = null;
+        let jumpCooldown = false;
+        let animationFrameId = null;
+
+        // Web Audio API Synthesizer
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function playSound(type) {
+            if (isSoundMuted) return;
+            try {
+                if (!audioCtx) audioCtx = new AudioCtx();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15); // E5
+                    osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.3); // G5
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                    osc.start(now);
+                    osc.stop(now + 0.4);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now); // A3
+                    osc.frequency.setValueAtTime(164.81, now + 0.15); // E3
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } else if (type === 'jump') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.exponentialRampToValueAtTime(800, now + 0.2);
+                    gain.gain.setValueAtTime(0.4, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'tick') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(800, now);
+                    gain.gain.setValueAtTime(0.05, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                }
+            } catch (e) {
+                console.log('Audio error:', e);
+            }
+        }
+
+        function readQuestionTTS() {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const q = currentQuestions[currentQuestionIndex];
+            const textToSay = `${q.question}. Pilihan A: ${q.optionA}. Pilihan B: ${q.optionB}.`;
+            const utterance = new SpeechSynthesisUtterance(textToSay);
+            utterance.lang = 'id-ID';
+            utterance.rate = 0.95;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        async function initCamera() {
+            const video = document.getElementById('videoElement');
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' },
+                    audio: false
+                });
+                videoStream = stream;
+                video.srcObject = stream;
+                await video.play();
+                isCameraActive = true;
+
+                document.getElementById('startScreen').classList.add('hidden');
+                document.getElementById('gameScreen').classList.remove('hidden');
+
+                // Start motion detection loop
+                requestAnimationFrame(processFrame);
+                startQuiz();
+            } catch (err) {
+                console.error("Camera access error:", err);
+                alert("Gagal mengakses kamera! Kami akan mengalihkan ke mode Kontrol Keyboard / Layar Sentuh.");
+                startKeyboardMode();
+            }
+        }
+
+        function processFrame() {
+            const video = document.getElementById('videoElement');
+            const procCanvas = document.getElementById('processCanvas');
+            const outCanvas = document.getElementById('outputCanvas');
+
+            if (!isCameraActive || video.paused || video.ended) return;
+
+            const width = 320;
+            const height = 240;
+
+            procCanvas.width = width;
+            procCanvas.height = height;
+            outCanvas.width = width;
+            outCanvas.height = height;
+
+            const pCtx = procCanvas.getContext('2d', { willReadFrequently: true });
+            const oCtx = outCanvas.getContext('2d');
+
+            // Draw video onto processing canvas
+            pCtx.drawImage(video, 0, 0, width, height);
+            const frameData = pCtx.getImageData(0, 0, width, height);
+
+            // Draw to visible output canvas
+            oCtx.drawImage(video, 0, 0, width, height);
+
+            if (prevFrameData && !isAnsweringState) {
+                analyzeMotion(frameData, prevFrameData, width, height, oCtx);
+            }
+
+            prevFrameData = frameData;
+            animationFrameId = requestAnimationFrame(processFrame);
+        }
+
+        function analyzeMotion(curr, prev, w, h, outCtx) {
+            if (isAnsweringState) return;
+
+            const currPixels = curr.data;
+            const prevPixels = prev.data;
+            const sensitivity = parseInt(document.getElementById('sensitivitySlider').value) || 12;
+
+            let motionLeft = 0;   // Zone A
+            let motionRight = 0;  // Zone B
+            let totalMotionY = 0;
+            let motionCount = 0;
+
+            const zoneBoundaryLeft = Math.floor(w * 0.46);
+            const zoneBoundaryRight = Math.floor(w * 0.54);
+
+            // Sample pixels with finer step for increased motion accuracy
+            for (let y = 15; y < h - 15; y += 5) {
+                for (let x = 15; x < w - 15; x += 5) {
+                    const idx = (y * w + x) * 4;
+                    const diffR = Math.abs(currPixels[idx] - prevPixels[idx]);
+                    const diffG = Math.abs(currPixels[idx + 1] - prevPixels[idx + 1]);
+                    const diffB = Math.abs(currPixels[idx + 2] - prevPixels[idx + 2]);
+                    const diff = (diffR + diffG + diffB) / 3;
+
+                    if (diff > sensitivity) {
+                        motionCount++;
+                        totalMotionY += y;
+
+                        // Visual particle dots on motion
+                        outCtx.fillStyle = 'rgba(255, 230, 0, 0.7)';
+                        outCtx.fillRect(x, y, 3, 3);
+
+                        // Because canvas is mirrored in CSS:
+                        // Canvas left side (x < zoneBoundaryLeft) corresponds to physical user right
+                        // Canvas right side (x > zoneBoundaryRight) corresponds to physical user left
+                        if (x < zoneBoundaryLeft) {
+                            motionRight++;
+                        } else if (x > zoneBoundaryRight) {
+                            motionLeft++;
+                        }
+                    }
+                }
+            }
+
+            // Detect Jump (Lowered delta threshold to 12px for easier jump detection)
+            if (motionCount > 25) {
+                const avgY = totalMotionY / motionCount;
+                if (lastHeadY !== null) {
+                    const deltaY = lastHeadY - avgY; // Positive = upward movement
+                    if (deltaY > 12 && !jumpCooldown) {
+                        triggerJumpEffect();
+                    }
+                }
+                lastHeadY = avgY;
+            }
+
+            // Determine active zone based on motion dominance with lower threshold (12 pixels)
+            const label = document.getElementById('motionDetectorLabel');
+            const progA = document.getElementById('progressZoneA');
+            const progB = document.getElementById('progressZoneB');
+            const visualA = document.getElementById('zoneAVisual');
+            const visualB = document.getElementById('zoneBVisual');
+
+            if (motionLeft > motionRight + 12) {
+                // User moving in Zone A (Left)
+                label.innerText = "Posisi: ZONA A (Kiri)";
+                label.className = "bg-emerald-600 text-white text-xs px-3 py-1.5 rounded-full font-bold shadow";
+                zoneAHoldTime++;
+                zoneBHoldTime = Math.max(0, zoneBHoldTime - 2);
+
+                visualA.classList.add('bg-emerald-500/30', 'border-emerald-300');
+                visualB.classList.remove('bg-blue-500/30', 'border-blue-300');
+            } else if (motionRight > motionLeft + 12) {
+                // User moving in Zone B (Right)
+                label.innerText = "Posisi: ZONA B (Kanan)";
+                label.className = "bg-blue-600 text-white text-xs px-3 py-1.5 rounded-full font-bold shadow";
+                zoneBHoldTime++;
+                zoneAHoldTime = Math.max(0, zoneAHoldTime - 2);
+
+                visualB.classList.add('bg-blue-500/30', 'border-blue-300');
+                visualA.classList.remove('bg-emerald-500/30', 'border-emerald-300');
+            } else {
+                label.innerText = "Posisi: Tengah (Siap)";
+                label.className = "bg-purple-900/80 text-yellow-300 text-xs px-3 py-1.5 rounded-full font-bold";
+                zoneAHoldTime = Math.max(0, zoneAHoldTime - 1);
+                zoneBHoldTime = Math.max(0, zoneBHoldTime - 1);
+
+                visualA.classList.remove('bg-emerald-500/30', 'border-emerald-300');
+                visualB.classList.remove('bg-blue-500/30', 'border-blue-300');
+            }
+
+            // Update Progress Bars
+            const percentA = Math.min(100, (zoneAHoldTime / HOLD_REQUIRED) * 100);
+            const percentB = Math.min(100, (zoneBHoldTime / HOLD_REQUIRED) * 100);
+
+            progA.style.width = percentA + '%';
+            progB.style.width = percentB + '%';
+
+            // Confirm selection if hold threshold reached
+            if (percentA >= 100 && !isAnsweringState) {
+                zoneAHoldTime = 0;
+                selectAnswer('A');
+            } else if (percentB >= 100 && !isAnsweringState) {
+                zoneBHoldTime = 0;
+                selectAnswer('B');
+            }
+        }
+
+        function triggerJumpEffect() {
+            if (isAnsweringState) return;
+            jumpCooldown = true;
+            playSound('jump');
+
+            const alertEl = document.getElementById('jumpAlert');
+            alertEl.classList.remove('hidden');
+
+            // If user is currently leaning towards A or B when jumping, confirm immediately!
+            if (zoneAHoldTime > 2) {
+                selectAnswer('A');
+            } else if (zoneBHoldTime > 2) {
+                selectAnswer('B');
+            }
+
+            setTimeout(() => {
+                alertEl.classList.add('hidden');
+                jumpCooldown = false;
+            }, 1000);
+        }
+
+        function startKeyboardMode() {
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            document.getElementById('camStatusBadge').innerHTML = '<i class="fa-solid fa-keyboard mr-1"></i> Mode Keypad';
+            startQuiz();
+        }
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            correctCount = 0;
+            wrongCount = 0;
+            userAnswers = [];
+            document.getElementById('headerScore').innerText = score;
+            showQuestion();
+        }
+
+        function showQuestion() {
+            isAnsweringState = false;
+            zoneAHoldTime = 0;
+            zoneBHoldTime = 0;
+
+            if (currentQuestionIndex >= currentQuestions.length) {
+                finishQuiz();
+                return;
+            }
+
+            const q = currentQuestions[currentQuestionIndex];
+
+            document.getElementById('questionCounter').innerText = `Soal ${currentQuestionIndex + 1} dari ${currentQuestions.length}`;
+            document.getElementById('questionText').innerText = q.question;
+            document.getElementById('optionAText').innerText = q.optionA;
+            document.getElementById('optionBText').innerText = q.optionB;
+
+            // Reset option styling
+            const btnA = document.getElementById('btnOptionA');
+            const btnB = document.getElementById('btnOptionB');
+            btnA.className = "w-full text-left bg-emerald-50 hover:bg-emerald-100 border-4 border-emerald-300 rounded-2xl p-4 transition-all duration-200 flex items-start gap-4 group shadow-md relative overflow-hidden";
+            btnB.className = "w-full text-left bg-blue-50 hover:bg-blue-100 border-4 border-blue-300 rounded-2xl p-4 transition-all duration-200 flex items-start gap-4 group shadow-md relative overflow-hidden";
+
+            document.getElementById('checkA').classList.add('hidden');
+            document.getElementById('checkB').classList.add('hidden');
+            document.getElementById('crossA').classList.add('hidden');
+            document.getElementById('crossB').classList.add('hidden');
+
+            // Hide Feedback Banner
+            const banner = document.getElementById('answerFeedbackBanner');
+            banner.className = "hidden transition-all duration-300 my-3 p-3 rounded-2xl text-center font-bold text-sm shadow-md border-2";
+            banner.innerHTML = "";
+
+            // Read aloud TTS automatically on new question
+            readQuestionTTS();
+
+            // Reset timer
+            clearInterval(timerInterval);
+            timer = 15;
+            document.getElementById('timerText').innerText = timer;
+            timerInterval = setInterval(() => {
+                timer--;
+                document.getElementById('timerText').innerText = timer;
+                if (timer <= 3 && timer > 0) playSound('tick');
+                if (timer <= 0) {
+                    clearInterval(timerInterval);
+                    selectAnswer(null);
+                }
+            }, 1000);
+        }
+
+        function selectAnswer(chosen) {
+            if (isAnsweringState) return;
+            isAnsweringState = true;
+            clearInterval(timerInterval);
+
+            const q = currentQuestions[currentQuestionIndex];
+            const isCorrect = (chosen === q.correct);
+
+            userAnswers.push({
+                question: q.question,
+                chosen: chosen || 'Tidak Menjawab',
+                correct: q.correct,
+                isCorrect: isCorrect,
+                explanation: q.explanation
+            });
+
+            const btnA = document.getElementById('btnOptionA');
+            const btnB = document.getElementById('btnOptionB');
+            const banner = document.getElementById('answerFeedbackBanner');
+
+            // Visual card highlights & feedback banner
+            banner.classList.remove('hidden');
+
+            if (isCorrect) {
+                playSound('correct');
+                score += 10;
+                correctCount++;
+
+                banner.className = "my-3 p-3 rounded-2xl text-center font-bold text-sm shadow-md border-2 bg-emerald-100 border-emerald-400 text-emerald-900 animate-bounce";
+                banner.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-1 text-lg"></i> <strong>JAWABAN BENAR! (+10 Skor)</strong><br><span class="text-xs font-normal text-emerald-800">${q.explanation}</span>`;
+
+                if (chosen === 'A') {
+                    btnA.className = "w-full text-left bg-emerald-200 border-4 border-emerald-600 ring-4 ring-emerald-300 rounded-2xl p-4 transition-all duration-200 flex items-start gap-4 shadow-xl relative overflow-hidden transform scale-[1.02]";
+                    document.getElementById('checkA').classList.remove('hidden');
+                } else if (chosen === 'B') {
+                    btnB.className = "w-full text-left bg-emerald-200 border-4 border-emerald-600 ring-4 ring-emerald-300 rounded-2xl p-4 transition-all duration-200 flex items-start gap-4 shadow-xl relative overflow-hidden transform scale-[1.02]";
+                    document.getElementById('checkB').classList.remove('hidden');
+                }
+            } else {
+                playSound('wrong');
+                wrongCount++;
+
+                const correctOptionText = q.correct === 'A' ? q.optionA : q.optionB;
+                banner.className = "my-3 p-3 rounded-2xl text-center font-bold text-sm shadow-md border-2 bg-rose-100 border-rose-400 text-rose-900";
+                banner.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-600 mr-1 text-lg"></i> <strong>JAWABAN ${chosen ? 'KURANG TEPAT' : 'WAKTU HABIS'}!</strong><br><span class="text-xs font-normal text-slate-800">Jawaban benar adalah <strong>${q.correct} (${correctOptionText})</strong>. ${q.explanation}</span>`;
+
+                if (chosen === 'A') {
+                    btnA.className = "w-full text-left bg-rose-100 border-4 border-rose-500 rounded-2xl p-4 transition-all duration-200 flex items-start gap-4 shadow-md relative overflow-hidden";
+                    document.getElementById('crossA').classList.remove('hidden');
+                    // Highlight correct option B
+                    btnB.className = "w-full text-left bg-emerald-100 border-4 border-emerald-500 rounded-2xl p-4 transition-all duration-200 flex items-start gap-4 shadow-md relative overflow-hidden";
+                    document.getElementById('checkB').classList.remove('hidden');
+                } else if (chosen === 'B') {
+                    btnB.className = "w-full text-left bg-rose-100 border-4 border-rose-500 rounded-2xl p-4 transition-all duration-200 flex items-start gap-4 shadow-md relative overflow-hidden";
+                    document.getElementById('crossB').classList.remove('hidden');
+                    // Highlight correct option A
+                    btnA.className = "w-full text-left bg-emerald-100 border-4 border-emerald-500 rounded-2xl p-4 transition-all duration-200 flex items-start gap-4 shadow-md relative overflow-hidden";
+                    document.getElementById('checkA').classList.remove('hidden');
+                } else {
+                    // Time out case
+                    if (q.correct === 'A') {
+                        btnA.className = "w-full text-left bg-emerald-100 border-4 border-emerald-500 rounded-2xl p-4 transition-all duration-200 flex items-start gap-4 shadow-md relative overflow-hidden";
+                        document.getElementById('checkA').classList.remove('hidden');
+                    } else {
+                        btnB.className = "w-full text-left bg-emerald-100 border-4 border-emerald-500 rounded-2xl p-4 transition-all duration-200 flex items-start gap-4 shadow-md relative overflow-hidden";
+                        document.getElementById('checkB').classList.remove('hidden');
+                    }
+                }
+            }
+
+            document.getElementById('headerScore').innerText = score;
+
+            // Wait 2 seconds to give students time to read the instant feedback explanation before next question
+            setTimeout(() => {
+                currentQuestionIndex++;
+                showQuestion();
+            }, 2200);
+        }
+
+        function finishQuiz() {
+            clearInterval(timerInterval);
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.remove('hidden');
+
+            document.getElementById('finalScore').innerText = score;
+            document.getElementById('finalCorrect').innerText = correctCount;
+            document.getElementById('finalWrong').innerText = wrongCount;
+
+            const icon = document.getElementById('resultIcon');
+            const title = document.getElementById('resultTitle');
+            const sub = document.getElementById('resultSubtitle');
+
+            if (score >= 80) {
+                title.innerText = "Luar Biasa, Bintang Ekonomi!";
+                sub.innerText = "Kamu menguasai materi Kegiatan Ekonomi Kelas 5 dengan sangat baik!";
+                icon.className = "fa-solid fa-crown text-yellow-300 text-5xl";
+            } else if (score >= 50) {
+                title.innerText = "Kerja Bagus!";
+                sub.innerText = "Hasilmu sudah cukup baik, yuk belajar lagi agar makin paham!";
+                icon.className = "fa-solid fa-star text-amber-300 text-5xl";
+            } else {
+                title.innerText = "Semangat Belajar!";
+                sub.innerText = "Jangan menyerah, baca ringkasan dan coba lagi!";
+                icon.className = "fa-solid fa-graduation-cap text-purple-300 text-5xl";
+            }
+
+            // Build Review List
+            const list = document.getElementById('reviewList');
+            list.innerHTML = '';
+            userAnswers.forEach((ans, idx) => {
+                const item = document.createElement('div');
+                item.className = `p-3 rounded-xl border ${ans.isCorrect ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-rose-50 border-rose-200 text-rose-900'}`;
+                item.innerHTML = `
+                    <div class="font-bold mb-1">${idx + 1}. ${ans.question}</div>
+                    <div class="flex items-center gap-3 text-xs mb-1">
+                        <span>Jawabanmu: <strong class="${ans.isCorrect ? 'text-emerald-700' : 'text-rose-700'}">${ans.chosen}</strong></span>
+                        <span>Jawaban Benar: <strong>${ans.correct}</strong></span>
+                    </div>
+                    <div class="text-[11px] text-slate-600 bg-white/70 p-2 rounded-lg border border-slate-200/50">
+                        💡 ${ans.explanation}
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function restartQuiz() {
+            document.getElementById('resultScreen').classList.add('hidden');
+            if (isCameraActive) {
+                document.getElementById('gameScreen').classList.remove('hidden');
+            } else {
+                document.getElementById('startScreen').classList.remove('hidden');
+            }
+            startQuiz();
+        }
+
+        async function generateAiQuestions() {
+            const topic = document.getElementById('aiTopicInput').value.trim() || 'Kegiatan Ekonomi (Produksi, Distribusi, Konsumsi, Jasa, Agraris)';
+            const count = parseInt(document.getElementById('aiCountSelect').value) || 5;
+
+            const btn = document.getElementById('btnGenerateAiQuestions');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Memproses AI...`;
+
+            const apiKey = ""; // Canvas runtime provides key
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            const systemPrompt = `Kamu adalah seorang guru IPS SD berpengalaman. Buatkan ${count} soal kuis interaktif dengan pilihan ganda A dan B untuk murid kelas 5 SD mengenai materi IPS "Kegiatan Ekonomi". 
+Keluarkannya dalam bentuk JSON ARRAY murni berisi objek dengan properti:
+- "question" (string): teks pertanyaan pendek, padat, mudah dipahami anak SD.
+- "optionA" (string): opsi pilihan A.
+- "optionB" (string): opsi pilihan B.
+- "correct" (string): harus bernilai "A" atau "B".
+- "explanation" (string): penjelasan singkat 1-2 kalimat mengapa jawaban itu benar.`;
+
+            const payload = {
+                contents: [{ parts: [{ text: `Buatkan ${count} soal tentang topik spesifik: ${topic}` }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "ARRAY",
+                        items: {
+                            type: "OBJECT",
+                            properties: {
+                                question: { type: "STRING" },
+                                optionA: { type: "STRING" },
+                                optionB: { type: "STRING" },
+                                correct: { type: "STRING" },
+                                explanation: { type: "STRING" }
+                            },
+                            propertyOrdering: ["question", "optionA", "optionB", "correct", "explanation"]
+                        }
+                    }
+                }
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const jsonText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (jsonText) {
+                    const newQuestions = JSON.parse(jsonText);
+                    if (Array.isArray(newQuestions) && newQuestions.length > 0) {
+                        currentQuestions = newQuestions;
+                        alert(`Berhasil membuat ${newQuestions.length} soal AI baru! Kuis akan dimulai sekarang.`);
+                        document.getElementById('aiModal').classList.add('hidden');
+                        restartQuiz();
+                    }
+                } else {
+                    throw new Error("Respon AI tidak valid");
+                }
+            } catch (err) {
+                console.error("AI Generation error:", err);
+                alert("Gagal membuat soal AI. Menggunakan bank soal standar.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-bolt"></i> Generasi Soal`;
+            }
+        }
+
+        window.onload = function() {
+            // Camera & Keyboard start handlers
+            document.getElementById('btnStartCam').addEventListener('click', initCamera);
+            document.getElementById('btnStartKeyboard').addEventListener('click', startKeyboardMode);
+
+            // Recalibrate button
+            document.getElementById('btnRecalibrate').addEventListener('click', () => {
+                zoneAHoldTime = 0;
+                zoneBHoldTime = 0;
+                prevFrameData = null;
+                playSound('tick');
+            });
+
+            // Toggle Audio
+            document.getElementById('btnSoundToggle').addEventListener('click', () => {
+                isSoundMuted = !isSoundMuted;
+                const soundIcon = document.getElementById('soundIcon');
+                if (isSoundMuted) {
+                    soundIcon.className = "fa-solid fa-volume-xmark text-rose-500";
+                } else {
+                    soundIcon.className = "fa-solid fa-volume-high text-slate-700";
+                }
+            });
+
+            // AI Modal Event listeners
+            const modal = document.getElementById('aiModal');
+            document.getElementById('btnAiModal').addEventListener('click', () => modal.classList.remove('hidden'));
+            document.getElementById('btnAiGenerateMore').addEventListener('click', () => modal.classList.remove('hidden'));
+            document.getElementById('btnCloseAiModal').addEventListener('click', () => modal.classList.add('hidden'));
+            document.getElementById('btnCancelAi').addEventListener('click', () => modal.classList.add('hidden'));
+            document.getElementById('btnGenerateAiQuestions').addEventListener('click', generateAiQuestions);
+
+            // Keyboard Shortcuts
+            window.addEventListener('keydown', (e) => {
+                if (document.getElementById('gameScreen').classList.contains('hidden')) return;
+
+                if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+                    selectAnswer('A');
+                } else if (e.key === 'ArrowRight' || e.key === 'b' || e.key === 'B') {
+                    selectAnswer('B');
+                } else if (e.key === ' ' || e.key === 'ArrowUp') {
+                    triggerJumpEffect();
+                }
+            });
+        };
+    </script>
+</body>
+</html>
